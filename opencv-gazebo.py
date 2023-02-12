@@ -155,7 +155,6 @@ def publish_message():
      
   # Go through the loop 10 times per second
   rate = rospy.Rate(30) # 10hz
-     
   # Create a VideoCapture object
   # The argument '0' gets the default webcam.
      
@@ -189,14 +188,15 @@ def publish_message():
       except CvBridgeError as e:
           print(e)
      
-             
+          
       # Sleep just enough to maintain the desired rate
       rate.sleep()
-
 
 if __name__ == '__main__':
   try:
     publish_message()
   except rospy.ROSInterruptException:
     pass
+
+
 
