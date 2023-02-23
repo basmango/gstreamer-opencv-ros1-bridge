@@ -175,6 +175,7 @@ def publish_message():
 
       frame = video.frame()
 
+      
          
       # Print debugging information to the terminal
       rospy.loginfo('publishing video frame')
