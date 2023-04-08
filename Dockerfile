@@ -16,12 +16,11 @@ RUN sudo apt-get install -y python3 python3-pip ros-noetic-rospy ros-noetic-cv-b
 RUN sudo apt-get install -y libcairo2-dev libjpeg-dev libgif-dev
 
 COPY requirements.txt /
-COPY opencv-gazebo.py  /
 
 RUN pip3 install --upgrade pip setuptools wheel
 
 RUN pip3 install -r requirements.txt
-
+COPY opencv-gazebo.py  /
 COPY entrypoint.sh /
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT /entrypoint.sh 

@@ -171,14 +171,13 @@ def publish_message():
 
 
       if not video.frame_available():
-            continue
 
+            continue
       frame = video.frame()
 
       
          
       # Print debugging information to the terminal
-      rospy.loginfo('publishing video frame')
              
       # Publish the image.
       # The 'cv2_to_imgmsg' method converts an OpenCV
