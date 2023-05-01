@@ -3,11 +3,7 @@
 import cv2
 import gi
 import numpy as np
-import rospy
 import cv2
-from std_msgs.msg import String
-from sensor_msgs.msg import Image
-from cv_bridge import CvBridge, CvBridgeError
 
 
 gi.require_version("Gst", "1.0")
@@ -150,51 +146,46 @@ class Video:
 def publish_message():
     # Node is publishing to the video_frames topic using
     # the message type Image
-    pub = rospy.Publisher("video_frames", Image, queue_size=1)
 
     # Tells rospy the name of the node.
     # Anonymous = True makes sure the node has a unique name. Random
     # numbers are added to the end of the name.
-    rospy.init_node("video_pub_py", anonymous=True)
 
     # Go through the loop 10 times per second
-    rate = rospy.Rate(30)  # 10hz
     # Create a VideoCapture object
     # The argument '0' gets the default webcam.
 
     # Used to convert between ROS and OpenCV images
-    br = CvBridge()
 
     video = Video()
     # While ROS is still running.
-    while not rospy.is_shutdown():
-        # Capture frame-by-frame
-        # This method returns True/False as well
-        # as the video frame.
 
+    # init avi video writer
+    fourcc = cv2.VideoWriter_fourcc(*"XVID")
+    out = cv2.VideoWriter("output.avi", fourcc, 20.0, (1280, 720))
+
+    while True:
         if not video.frame_available():
             continue
+
+        # Capture frame-by-frame
         frame = video.frame()
-        # convert to greyscale
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-        # Publish the image.
-        # The 'cv2_to_imgmsg' method converts an OpenCV
-        # image to a ROS image message
+        # write image to file
+        out.write(frame)
+        # show
+        cv2.imshow("frame", frame)
+        # check for interrupt
+        if cv2.waitKey(1) & 0xFF == ord("q"):
+            break
 
-        try:
-            pub.publish(br.cv2_to_imgmsg(frame, "mono8"))
-            # publish in greyscale
-            # pub.publish(br.cv2_to_imgmsg(frame, "mono8"))
-        except CvBridgeError as e:
-            print(e)
-
-        # Sleep just enough to maintain the desired rate
-        rate.sleep()
+    # close video writer
+    out.release()
+    # When everything done, release the capture
 
 
 if __name__ == "__main__":
     try:
         publish_message()
-    except rospy.ROSInterruptException:
+    except Exception as e:
         pass
